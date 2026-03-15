@@ -1,36 +1,40 @@
 package com.likelion.animalface.domain.user.controller;
 
-import com.likelion.animalface.domain.user.dto.FindIdReq;
-import com.likelion.animalface.domain.user.dto.PasswordReq;
-import com.likelion.animalface.domain.user.dto.SignupReq;
+import com.likelion.animalface.domain.user.dto.req.FindIdReq;
+import com.likelion.animalface.domain.user.dto.req.PasswordReq;
+import com.likelion.animalface.domain.user.dto.req.SignupReq;
+import com.likelion.animalface.domain.user.dto.res.UserIdRes;
+import com.likelion.animalface.domain.user.dto.res.UserPasswordRes;
 import com.likelion.animalface.domain.user.service.UserService;
+import com.likelion.animalface.global.dto.ApiResponse; // 공통 응답 객체
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-@RestController
 public class UserController {
+
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupReq req) {
+    public ApiResponse<String> signup(@RequestBody SignupReq req) {
         userService.signup(req);
-        return ResponseEntity.ok("회원가입 완료");
+        return ApiResponse.success("회원가입 완료");
     }
 
     @PostMapping("/id")
-    public ResponseEntity<String> findId(@RequestBody FindIdReq req) {
-        return ResponseEntity.ok(userService.getUsername(req.phone()));
+    public ApiResponse<UserIdRes> findId(@RequestBody FindIdReq req) {
+        UserIdRes res = userService.getUsername(req.phone());
+        return ApiResponse.success(res);
     }
 
     @PostMapping("/password")
-    public ResponseEntity<String> getPassword(@RequestBody PasswordReq req) {
-        return ResponseEntity.ok(userService.getPassword(req.username(), req.phone()));
+    public ApiResponse<UserPasswordRes> getPassword(@RequestBody PasswordReq req) {
+        UserPasswordRes res = userService.getPassword(req.username(), req.phone());
+        return ApiResponse.success(res);
     }
-
 }

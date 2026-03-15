@@ -1,4 +1,4 @@
-package com.likelion.animalface.domain.user.dto;
+package com.likelion.animalface.domain.user.dto.req;
 
 import com.likelion.animalface.domain.user.entity.User;
 
