@@ -1,6 +1,6 @@
 package com.likelion.animalface.domain.user.entity;
 
-import com.likelion.animalface.common.BaseTimeEntity;
+import com.likelion.animalface.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

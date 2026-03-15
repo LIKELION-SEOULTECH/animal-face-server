@@ -1,4 +1,4 @@
-package com.likelion.animalface.common;
+package com.likelion.animalface.global.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
