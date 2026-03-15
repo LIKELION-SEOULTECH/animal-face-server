@@ -82,8 +82,8 @@ animal-face-server/
 
 ## 개발 진행 상황
 
-- [o] 프로젝트 초기 설정
-- [o] Spring Boot 기본 구성
+- [x] 프로젝트 초기 설정
+- [x] Spring Boot 기본 구성
 - [ ] Feign Client 설정
 - [ ] AI 서버 API 연동
 - [ ] 동물상 분석 기능 구현
