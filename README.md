@@ -72,6 +72,7 @@ animal-face-server/
 │   │   │       ├── domain/
 │   │   │       ├── repository/
 │   │   │       ├── dto/
+│   │   │       ├── common/
 │   │   │       └── client/  # Feign Client
 │   │   └── resources/
 │   │       └── application.yml
