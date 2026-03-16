@@ -46,12 +46,12 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("일치하는 회원 정보가 없습니다."));
 
         // 1. UUID 생성 후 하이픈 제거 및 8자리 추출 (실무형 랜덤 비번)
-        String tempPw = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+        String tempPassword = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
 
         // 2. 암호화하여 DB 업데이트 (Dirty Checking 활용)
-        user.updatePassword(passwordEncoder.encode(tempPw));
+        user.updatePassword(passwordEncoder.encode(tempPassword));
 
         // 3. 사용자에게 보여줄 응답 객체 반환 (암호화 전 평문 전달)
-        return UserPasswordRes.of(tempPw);
+        return UserPasswordRes.of(tempPassword);
     }
 }
