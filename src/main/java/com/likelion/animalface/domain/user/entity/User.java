@@ -1,6 +1,6 @@
 package com.likelion.animalface.domain.user.entity;
 
-import com.likelion.animalface.common.BaseTimeEntity;
+import com.likelion.animalface.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +19,14 @@ public class User extends BaseTimeEntity {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(unique = true, nullable = false)
+    private String phone;
+
+
     @Column(nullable = false)
     private String password;
+
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }

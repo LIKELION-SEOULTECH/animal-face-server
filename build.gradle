@@ -25,19 +25,37 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-h2console'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 1. Web & API: RESET Controller
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
+
+    // 2. Security: 로그인, 비밀번호 암호화(BCrype), 권한 제어
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // 3. DB & JPA: ORM 및 연관관계 매핑
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'org.springframework.boot:spring-boot-h2console'
+
+    // 4. 데이터 검증
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // 5. Swagger: API 문서 생성
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+
+    // 6. Lombok
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // 7. Test: JUnit5를 이용한 단위 테스트
+    // 통합 테스트 팩 (JUnit5, AssertJ, Mockito 등이 모두 들어있음)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 시큐리티 테스트 (로그인한 사용자 가짜로 만들기 @WithMockUser 등)
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // 테스트용 DB (H2) - 로컬 MySQL 대신 메모리 DB로 빠르게 테스트할 때 필수
+    testRuntimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {

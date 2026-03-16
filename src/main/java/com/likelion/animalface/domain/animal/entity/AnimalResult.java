@@ -1,7 +1,7 @@
 package com.likelion.animalface.domain.animal.entity;
 
-import com.likelion.animalface.common.BaseTimeEntity;
-import com.likelion.animalface.domain.user.entity.Users;
+import com.likelion.animalface.global.common.BaseTimeEntity;
+import com.likelion.animalface.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -25,5 +25,5 @@ public class AnimalResult extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private Users user;
+    private User user;
 }
