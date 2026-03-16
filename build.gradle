@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.0.3' // 2026년 기준 정식 버전 사용
+    id 'org.springframework.boot' version '3.4.3'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -9,7 +9,6 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        // 2026년 표준인 Java 21 사용 (Virtual Thread 등 활용 가능)
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
@@ -25,38 +24,35 @@ repositories {
 }
 
 ext {
-    // Spring Boot 4.x와 호환되는 최신 Spring Cloud 버전 (예시)
-    set('springCloudVersion', "2025.0.0")
+    // Spring Boot 3.4.x와 가장 잘 맞는 안정화된 Cloud 버전
+    set('springCloudVersion', "2024.0.0")
 }
 
 dependencies {
-    // 1. Web & API
+    // 1. Web & API (webmvc 대신 표준 starter-web 사용)
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // 2. Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // 3. Database
+    // 2. Database
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
 
-    // 4. Validation & Swagger
+    // 3. Validation & Swagger (Boot 3.4 호환 버전으로 하향)
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    // Spring Boot 4를 지원하는 최신 라이브러리 버전
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5' // 3.0.0 사용 금지
 
-    // 5. AWS S3 (Java SDK 2.x)
-    implementation 'software.amazon.awssdk:s3:2.29.0' // 업데이트된 버전
+    // 4. AWS S3 (v2 최신 안정 버전)
+    implementation 'software.amazon.awssdk:s3:2.25.7'
 
-    // 6. Spring Cloud OpenFeign
+    // 5. Spring Cloud OpenFeign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
-    // 7. Lombok
+    // 6. Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // 8. Test
+    // 7. Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
