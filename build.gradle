@@ -29,6 +29,9 @@ ext {
 }
 
 dependencies {
+    // env를 읽기 위한 라이브러리
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
     // 1. Web & API (webmvc 대신 표준 starter-web 사용)
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
