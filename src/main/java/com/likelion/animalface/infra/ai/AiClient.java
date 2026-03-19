@@ -1,8 +1,9 @@
-package com.likelion.animalface.global.infra.ai;
+package com.likelion.animalface.infra.ai;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.likelion.animalface.global.infra.ai.AiAnalyzeRes;
 
 @FeignClient(name = "ai-server-client", url = "${ai.server.url}")
 public interface AiClient {
@@ -13,7 +14,4 @@ public interface AiClient {
      */
     @PostMapping("/analyze")
     AiAnalyzeRes analyzeAnimalFace(@RequestParam("imageUrl") String imageUrl);
-
-    // AI 서버 응답을 담을 내부 Record
-    record AiAnalyzeRes(String animalType, Double score) {}
 }

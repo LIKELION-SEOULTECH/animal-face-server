@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 public enum AnimalType {
     DOG("강아지상"),
     CAT("고양이상"),
-    FOX("여우상");
+    FOX("여우상"),
+    UNKNOWN("알수없음");
 
     private final String name;
 }
