@@ -16,4 +16,12 @@ public interface AnimalResultRepository extends JpaRepository<AnimalResult, Long
      */
     @Query("SELECT ar FROM AnimalResult ar JOIN FETCH ar.user WHERE ar.user.id = :userId")
     List<AnimalResult> findAllByUserIdWithUser(@Param("userId") Long userId);
+
+    /**
+     * [N+1 발생 주의 — 성능 비교 테스트 전용]
+     * Fetch Join 없이 AnimalResult만 조회합니다.
+     * 이후 result.getUser() 호출 시 User 수만큼 추가 SELECT가 발생합니다. (N+1 문제)
+     */
+    @Query("SELECT ar FROM AnimalResult ar WHERE ar.user.id = :userId")
+    List<AnimalResult> findAllByUserIdWithoutFetchJoin(@Param("userId") Long userId);
 }

@@ -1,11 +1,21 @@
-# src/main/resources/application.yml
 spring:
   profiles:
-    include: aws  # application-aws.yml? ????
+    include: aws
   threads:
     virtual:
       enabled: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true      # SQL 줄바꿈·들여쓰기 정렬
+        highlight_sql: true   # 터미널 컬러 하이라이트 (Hibernate 6+)
+        use_sql_comments: true # 어떤 JPQL에서 나온 SQL인지 주석 표시
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace  # 바인딩 파라미터 값 출력
 
 ai:
   server:
-    url: http://localhost:8000  # ??? ?? AI ?? ??? ????.
+    url: http://localhost:8000

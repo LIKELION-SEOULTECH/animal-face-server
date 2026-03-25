@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    include:  # aws 프로파일 비활성화 (S3·dotenv 의존성 제거)
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace  # 바인딩 파라미터 값 출력
