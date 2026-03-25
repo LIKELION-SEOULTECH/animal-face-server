@@ -6,7 +6,6 @@ import com.likelion.animalface.domain.animal.repository.AnimalResultRepository;
 import com.likelion.animalface.domain.user.entity.User;
 import com.likelion.animalface.domain.user.repository.UserRepository;
 import com.likelion.animalface.infra.ai.AiClient;
-import com.likelion.animalface.infra.ai.AiAnalyzeRes;
 import com.likelion.animalface.infra.s3.S3Provider;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class AnimalCommandService {
                 .orElseThrow(() -> new EntityNotFoundException("유효하지 않은 사용자입니다."));
 
         String viewUrl = s3Provider.getPresignedUrlForView(req.imageKey());
-        AiAnalyzeRes aiRes = aiClient.analyzeAnimalFace(viewUrl);
+        com.likelion.animalface.global.infra.ai.AiAnalyzeRes aiRes = aiClient.analyzeAnimalFace(viewUrl);
 
         // 2. 팩터리 메서드로 조립
         AnimalResult result = AnimalResult.create(

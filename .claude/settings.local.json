@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"C:/Users/kimgt/project/animal_face/animalFace/src/main/java/com/likelion/animalface\" -type f -name \"*.java\" -exec basename {})",
+      "Bash(grep -E \"\\\\.\\(md|gradle|properties|yml|yaml\\)$\")"
+    ]
+  }
+}
