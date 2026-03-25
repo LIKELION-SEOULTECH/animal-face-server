@@ -10,11 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.likelion.animalface.global.config.JpaAuditingConfig;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -22,6 +21,9 @@ import java.util.List;
  * AnimalResult Repository N+1 vs Fetch Join 쿼리 비교 테스트
  *
  * <p>목적: LAZY 로딩 환경에서 Fetch Join 유무에 따른 실제 SQL 쿼리 발생 수 차이를 눈으로 확인한다.
+ *
+ * <p>@DataJpaTest 는 JPA 슬라이스만 로드하므로 @EnableJpaAuditing 이 담긴
+ * JpaAuditingConfig 를 @Import 로 명시적으로 주입해야 BaseTimeEntity Auditing이 동작한다.
  *
  * <p>실행 후 콘솔에서 확인할 것:
  * <ul>
@@ -31,15 +33,8 @@ import java.util.List;
  */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+@Import(JpaAuditingConfig.class)
 class AnimalResultRepositoryTest {
-
-    /**
-     * @DataJpaTest 환경에서 @EnableJpaAuditing 활성화
-     * (BaseTimeEntity의 createdAt nullable = false 조건을 만족시키기 위해 필요)
-     */
-    @EnableJpaAuditing
-    @Configuration
-    static class TestJpaAuditingConfig {}
 
     @Autowired
     private AnimalResultRepository animalResultRepository;
