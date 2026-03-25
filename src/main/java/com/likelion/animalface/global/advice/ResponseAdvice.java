@@ -10,7 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.Map;
 
-@RestControllerAdvice(basePackages = "com.likelion.animalFace.domain")
+@RestControllerAdvice(basePackages = "com.likelion.animalface.domain")
 public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override

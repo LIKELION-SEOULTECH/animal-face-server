@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.TimeUnit;
 
-@EnableFeignClients(basePackages = "com.likelion.animalface")
 @Configuration
-public class FeginConfig {
+@EnableFeignClients(basePackages = "com.likelion.animalface")
+public class FeignConfig {
 
     @Bean
     Logger.Level feignLoggerLevel() {

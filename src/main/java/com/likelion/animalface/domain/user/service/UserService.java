@@ -4,7 +4,7 @@ import com.likelion.animalface.domain.user.dto.req.SignupReq;
 import com.likelion.animalface.domain.user.dto.res.UserIdRes;
 import com.likelion.animalface.domain.user.dto.res.UserPasswordRes;
 import com.likelion.animalface.domain.user.entity.User;
-import com.likelion.animalface.domain.user.repositry.UserRepository;
+import com.likelion.animalface.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

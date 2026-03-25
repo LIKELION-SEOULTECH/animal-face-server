@@ -1,6 +1,5 @@
-package com.likelion.animalface.domain.user.repositry;
+package com.likelion.animalface.domain.user.repository;
 
-import com.likelion.animalface.domain.animal.entity.AnimalResult;
 import com.likelion.animalface.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
