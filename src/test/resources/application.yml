@@ -19,3 +19,7 @@ spring:
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace  # 바인딩 파라미터 값 출력
+
+ai:
+  server:
+    url: http://localhost:8000
