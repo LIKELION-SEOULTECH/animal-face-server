@@ -1,63 +1,71 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '4.0.3'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'org.springframework.boot' version '3.4.3'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.likelion'
 version = '0.0.1-SNAPSHOT'
-description = 'animalFace'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
+}
+
+ext {
+    // Spring Boot 3.4.x와 가장 잘 맞는 안정화된 Cloud 버전
+    set('springCloudVersion', "2024.0.0")
 }
 
 dependencies {
+    // env를 읽기 위한 라이브러리
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
-    // 1. Web & API: RESET Controller
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-
-    // 2. Security: 로그인, 비밀번호 암호화(BCrype), 권한 제어
+    // 1. Web & API (webmvc 대신 표준 starter-web 사용)
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // 3. DB & JPA: ORM 및 연관관계 매핑
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	implementation 'org.springframework.boot:spring-boot-h2console'
+    // 2. Database
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.h2database:h2'
 
-    // 4. 데이터 검증
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // 3. Validation & Swagger (Boot 3.4 호환 버전으로 하향)
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5' // 3.0.0 사용 금지
 
-    // 5. Swagger: API 문서 생성
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+    // 4. AWS S3 (v2 최신 안정 버전)
+    implementation 'software.amazon.awssdk:s3:2.25.7'
+
+    // 5. Spring Cloud OpenFeign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     // 6. Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-    // 7. Test: JUnit5를 이용한 단위 테스트
-    // 통합 테스트 팩 (JUnit5, AssertJ, Mockito 등이 모두 들어있음)
+    // 7. Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    // 시큐리티 테스트 (로그인한 사용자 가짜로 만들기 @WithMockUser 등)
     testImplementation 'org.springframework.security:spring-security-test'
+}
 
-    // 테스트용 DB (H2) - 로컬 MySQL 대신 메모리 DB로 빠르게 테스트할 때 필수
-    testRuntimeOnly 'com.h2database:h2'
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
