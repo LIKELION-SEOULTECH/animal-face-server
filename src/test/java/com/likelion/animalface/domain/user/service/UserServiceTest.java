@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -41,11 +43,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private final User mockUser = User.builder()
-            .username("testuser")
-            .phone("01012345678")
-            .password("encoded_pw")
-            .build();
+    private final User mockUser = User.create("testuser", "encoded_pw", "01012345678");
 
     // ── signup ──────────────────────────────────────────
 
@@ -97,6 +95,33 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.getUsername("01099999999"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("해당 번호로 가입된 사용자가 없습니다.");
+    }
+
+    // ── loadUserByUsername ───────────────────────────────
+
+    @Test
+    @DisplayName("loadUserByUsername 성공: username으로 UserDetails 반환")
+    void loadUserByUsername_success() {
+        // given
+        given(userRepository.findByUsername("testuser")).willReturn(Optional.of(mockUser));
+
+        // when
+        UserDetails result = userService.loadUserByUsername("testuser");
+
+        // then
+        assertThat(result.getUsername()).isEqualTo("testuser");
+    }
+
+    @Test
+    @DisplayName("loadUserByUsername 실패: 존재하지 않는 username → UsernameNotFoundException")
+    void loadUserByUsername_notFound() {
+        // given
+        given(userRepository.findByUsername("ghost")).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> userService.loadUserByUsername("ghost"))
+                .isInstanceOf(UsernameNotFoundException.class)
+                .hasMessage("존재하지 않는 사용자입니다.");
     }
 
     // ── getPassword ──────────────────────────────────────
