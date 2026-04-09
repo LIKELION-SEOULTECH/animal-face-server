@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
-    public ApiResponse<Void> handleEntityNotFound(EntityNotFoundException e) {
+    public ApiResponse<String> handleEntityNotFound(EntityNotFoundException e) {
         return ApiResponse.error(e.getMessage());
     }
 
@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse<Void> handleIllegalArgument(IllegalArgumentException e) {
+    public ApiResponse<String> handleIllegalArgument(IllegalArgumentException e) {
         return ApiResponse.error(e.getMessage());
     }
 }
