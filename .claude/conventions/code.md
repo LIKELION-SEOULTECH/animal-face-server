@@ -32,7 +32,8 @@
 11. [Lombok 사용 규칙](#11-lombok-사용-규칙)
 12. [트랜잭션 규칙](#12-트랜잭션-규칙)
 13. [비동기 처리 규칙](#13-비동기-처리-규칙)
-14. [안티패턴 체크리스트](#14-안티패턴-체크리스트)
+14. [예외 처리 규칙](#14-예외-처리-규칙)
+15. [안티패턴 체크리스트](#15-안티패턴-체크리스트)
 
 ---
 
@@ -409,13 +410,13 @@ public List<AnimalResultRes> getMyResults(Long userId) { ... }
 
 ```java
 // Service에서 throw (한국어 메시지)
-.orElseThrow(() -> new EntityNotFoundException("유효하지 않은 사용자입니다."));
-.orElseThrow(() -> new IllegalArgumentException("이미 존재하는 아이디입니다."));
+.orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "유효하지 않은 사용자입니다."));
+.orElseThrow(() -> new BusinessException(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다."));
 ```
 
 - 예외는 Service에서 throw, Controller는 catch 하지 않는다.
-- `EntityNotFoundException`: 엔티티를 찾을 수 없을 때.
-- `IllegalArgumentException`: 비즈니스 규칙 위반 (중복, 불일치 등).
+- 모든 비즈니스 예외는 `BusinessException` 하나로 통일한다. (→ [14. 예외 처리 규칙](#14-예외-처리-규칙) 참조)
+- Spring Security 계약이 요구하는 `UsernameNotFoundException` 은 예외적으로 허용.
 
 ---
 
@@ -644,7 +645,89 @@ public void analyzeAndSave(Long userId, AnimalAnalyzeReq req) { ... }
 
 ---
 
-## 14. 안티패턴 체크리스트
+## 14. 예외 처리 규칙
+
+> 이 프로젝트는 프론트·백·AI가 단일 Docker Compose로 구성된 **간단한 토이 프로젝트**다.
+> 실무 수준의 세분화된 예외 계층 대신, `BusinessException` 하나로 필수 에러만 표현한다.
+
+### 14-1. 구조
+
+```
+global/
+├── exception/
+│   └── BusinessException.java     ← 유일한 커스텀 예외
+└── advice/
+    └── GlobalExceptionHandler.java ← 예외 → HTTP 응답 변환
+```
+
+### 14-2. BusinessException
+
+```java
+// global/exception/BusinessException.java
+public class BusinessException extends RuntimeException {
+
+    private final HttpStatus status;
+
+    public BusinessException(HttpStatus status, String message) {
+        super(message);
+        this.status = status;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+}
+```
+
+**규칙**
+- `IllegalArgumentException`, `EntityNotFoundException` 등 표준 예외를 직접 사용하지 않는다.
+- 모든 비즈니스 예외는 `BusinessException(HttpStatus, 한국어메시지)` 로 통일.
+- Spring Security 계약(`UsernameNotFoundException`)처럼 프레임워크가 강제하는 예외는 예외적으로 허용.
+
+### 14-3. HTTP 상태 코드 기준
+
+| 상황 | HttpStatus | 예시 |
+|---|---|---|
+| 비즈니스 규칙 위반 (중복, 불일치 등) | `BAD_REQUEST (400)` | "이미 존재하는 아이디입니다." |
+| 엔티티를 찾을 수 없음 | `NOT_FOUND (404)` | "유효하지 않은 사용자입니다." |
+
+### 14-4. GlobalExceptionHandler
+
+```java
+// global/advice/GlobalExceptionHandler.java
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse<String>> handleBusiness(BusinessException e) {
+        return ResponseEntity
+                .status(e.getStatus())
+                .body(ApiResponse.error(e.getMessage()));
+    }
+}
+```
+
+**규칙**
+- `BusinessException` 단일 핸들러로 모든 비즈니스 예외를 처리한다.
+- 예외(`BusinessException`)는 도메인 계층, 응답 변환(`ApiResponse`)은 핸들러가 담당. 둘을 섞지 않는다.
+- `@ResponseStatus` 대신 `ResponseEntity`로 HTTP 상태를 동적으로 설정한다.
+
+### 14-5. 서비스 사용 예
+
+```java
+// 404 — 엔티티 없음
+userRepository.findById(userId)
+        .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "유효하지 않은 사용자입니다."));
+
+// 400 — 비즈니스 규칙 위반
+if (userRepository.findByUsername(req.username()).isPresent()) {
+    throw new BusinessException(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다.");
+}
+```
+
+---
+
+## 15. 안티패턴 체크리스트
 
 | 항목 | 잘못된 예 | 올바른 예 |
 |---|---|---|
@@ -660,3 +743,5 @@ public void analyzeAndSave(Long userId, AnimalAnalyzeReq req) { ... }
 | 클라이언트 userId | `@RequestParam Long userId` | `@AuthenticationPrincipal User user` |
 | Controller에서 Repository 직접 호출 | `userRepository.findById(...)` in Controller | Service를 통해 호출 |
 | 엔티티를 API 응답으로 직접 반환 | `return user;` | `return UserIdRes.of(user);` |
+| 표준 예외 직접 사용 | `throw new IllegalArgumentException(...)` | `throw new BusinessException(HttpStatus.BAD_REQUEST, ...)` |
+| 예외에 응답 포맷 혼입 | `BusinessException` 내부에 `ApiResponse` 포함 | 예외는 상태+메시지만, 변환은 `GlobalExceptionHandler` 담당 |
