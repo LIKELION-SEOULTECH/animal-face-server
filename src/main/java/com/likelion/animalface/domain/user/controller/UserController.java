@@ -24,17 +24,23 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * 1. 회원가입 API
+     */
     @Operation(summary = "회원가입", description = "아이디, 비밀번호, 전화번호로 회원가입합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "회원가입 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "이미 존재하는 아이디")
     })
     @PostMapping("/signup")
-    public ApiResponse<String> signup(@RequestBody SignupReq req) {
+    public ApiResponse<Void> signup(@RequestBody SignupReq req) {
         userService.signup(req);
-        return ApiResponse.success("회원가입 완료");
+        return ApiResponse.message("회원가입이 완료되었습니다.");
     }
 
+    /**
+     * 2. 아이디 찾기 API
+     */
     @Operation(summary = "아이디 찾기", description = "전화번호로 등록된 아이디를 조회합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "아이디 조회 성공"),
@@ -42,10 +48,12 @@ public class UserController {
     })
     @PostMapping("/id")
     public ApiResponse<UserIdRes> findId(@RequestBody FindIdReq req) {
-        UserIdRes res = userService.getUsername(req.phone());
-        return ApiResponse.success(res);
+        return ApiResponse.ok(userService.getUsername(req.phone()));
     }
 
+    /**
+     * 3. 임시 비밀번호 발급 API
+     */
     @Operation(summary = "임시 비밀번호 발급", description = "아이디와 전화번호가 일치하면 임시 비밀번호를 발급하고 DB를 갱신합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "임시 비밀번호 발급 성공"),
@@ -53,7 +61,6 @@ public class UserController {
     })
     @PostMapping("/password")
     public ApiResponse<UserPasswordRes> getPassword(@RequestBody PasswordReq req) {
-        UserPasswordRes res = userService.getPassword(req.username(), req.phone());
-        return ApiResponse.success(res);
+        return ApiResponse.ok(userService.getPassword(req.username(), req.phone()));
     }
 }

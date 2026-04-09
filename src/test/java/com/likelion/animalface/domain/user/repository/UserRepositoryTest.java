@@ -31,11 +31,7 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        savedUser = userRepository.save(User.builder()
-                .username("testuser")
-                .phone("01012345678")
-                .password("encoded_pw")
-                .build());
+        savedUser = userRepository.save(User.create("testuser", "encoded_pw", "01012345678"));
     }
 
     // ── findByUsername ───────────────────────────────────

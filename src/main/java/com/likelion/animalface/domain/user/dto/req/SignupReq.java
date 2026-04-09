@@ -13,11 +13,7 @@ public record SignupReq(
         String phone
 ) {
     public User to(String encodedPassword) {
-        return User.builder()
-                .username(username)
-                .password(encodedPassword)
-                .phone(phone)
-                .build();
+        return User.create(username, encodedPassword, phone);
     }
 }
 
