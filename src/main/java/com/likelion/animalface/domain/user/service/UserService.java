@@ -6,6 +6,9 @@ import com.likelion.animalface.domain.user.dto.res.UserPasswordRes;
 import com.likelion.animalface.domain.user.entity.User;
 import com.likelion.animalface.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +18,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -38,6 +41,12 @@ public class UserService {
         User user = userRepository.findByPhone(phone)
                 .orElseThrow(() -> new IllegalArgumentException("해당 번호로 가입된 사용자가 없습니다."));
         return UserIdRes.from(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 사용자입니다."));
     }
 
     @Transactional
