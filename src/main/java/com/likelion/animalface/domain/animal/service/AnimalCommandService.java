@@ -5,10 +5,11 @@ import com.likelion.animalface.domain.animal.entity.AnimalResult;
 import com.likelion.animalface.domain.animal.repository.AnimalResultRepository;
 import com.likelion.animalface.domain.user.entity.User;
 import com.likelion.animalface.domain.user.repository.UserRepository;
+import com.likelion.animalface.global.exception.BusinessException;
 import com.likelion.animalface.infra.ai.AiClient;
 import com.likelion.animalface.infra.s3.S3Provider;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class AnimalCommandService {
 
         // 1. [보안 및 정합성] 현재 시점에 유저가 존재하는지 진짜 DB에서 확인
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("유효하지 않은 사용자입니다."));
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "유효하지 않은 사용자입니다."));
 
         String viewUrl = s3Provider.getPresignedUrlForView(req.imageKey());
         com.likelion.animalface.global.infra.ai.AiAnalyzeRes aiRes = aiClient.analyzeAnimalFace(viewUrl);

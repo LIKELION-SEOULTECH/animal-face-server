@@ -5,6 +5,7 @@ import com.likelion.animalface.domain.user.dto.res.UserIdRes;
 import com.likelion.animalface.domain.user.dto.res.UserPasswordRes;
 import com.likelion.animalface.domain.user.entity.User;
 import com.likelion.animalface.domain.user.repository.UserRepository;
+import com.likelion.animalface.global.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -68,7 +69,7 @@ class UserServiceTest {
         given(userRepository.findByUsername("testuser")).willReturn(Optional.of(mockUser));
 
         assertThatThrownBy(() -> userService.signup(req))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(BusinessException.class)
                 .hasMessage("이미 존재하는 아이디입니다.");
 
         // 중복이면 저장이 호출되어선 안 된다
@@ -93,7 +94,7 @@ class UserServiceTest {
         given(userRepository.findByPhone("01099999999")).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.getUsername("01099999999"))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(BusinessException.class)
                 .hasMessage("해당 번호로 가입된 사용자가 없습니다.");
     }
 
@@ -148,7 +149,7 @@ class UserServiceTest {
                 .willReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.getPassword("wrong", "01012345678"))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(BusinessException.class)
                 .hasMessage("일치하는 회원 정보가 없습니다.");
     }
 }
